@@ -6,14 +6,14 @@ from google.oauth2.service_account import Credentials
 
 # ---------- CONFIG ----------
 INFO_SHEET_ID = "1MFtDX7ZduN9W1VVrlItafDl09OGDscKYgJDe1dnMay0"  # timeCapsule_info_sheet
-CREDENTIALS_FILE = "credentials.json"
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
-# ---------- AUTHENTICATION ----------
-creds = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+# ---------- AUTHENTICATION USING STREAMLIT SECRETS ----------
+creds_dict = st.secrets["google_service_account"]
+creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
 gc = gspread.authorize(creds)
 
 # Connect to info sheet
