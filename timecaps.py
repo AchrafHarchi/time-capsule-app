@@ -20,7 +20,7 @@ gc = gspread.authorize(creds)
 sheet = gc.open_by_key(INFO_SHEET_ID).sheet1
 
 # ---------- STREAMLIT FORM ----------
-st.title("🌿 Time Capsule - Étape 1 : Informations Client")
+st.title("🌿Étape 1 : Informations Client")
 
 with st.form("client_info_form"):
     prénom = st.text_input("Prénom")
