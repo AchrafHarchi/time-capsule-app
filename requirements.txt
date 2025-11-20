@@ -1,4 +1,11 @@
-streamlit
-gspread
-google-api-python-client
-pandas
+streamlit==1.51.0
+gspread==6.2.1
+google-api-python-client==2.187.0
+google-auth==2.43.0
+google-auth-oauthlib==1.2.2
+httplib2==0.31.0
+oauthlib==3.3.1
+requests==2.32.5
+pandas==2.3.3
+qrcode[pil]==7.4.2
+reportlab==4.0.0
