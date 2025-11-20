@@ -27,6 +27,9 @@ import tempfile
 import time
 from googleapiclient.http import MediaFileUpload
 
+import pickle, base64
+from io import BytesIO
+
 # ---------- CONFIG + AUTH (lecture depuis Streamlit secrets) ----------
 import streamlit as st
 import gspread
@@ -53,7 +56,7 @@ DIST_SHEET_ID = st.secrets["sheets"]["dist_sheet_id"]
 SCOPES = st.secrets.get("scopes", {}).get("list", DEFAULT_SCOPES)
 
 # ---------- SERVICE ACCOUNT (remplace credentials.json) ----------
-# Exige une section [google_service_account] dans ton TOML (format JSON-like)
+
 service_account_info = dict(st.secrets["google_service_account"])
 # On crée les creds directement depuis le dict (plus besoin de credentials.json)
 creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
@@ -82,6 +85,10 @@ dist_header = dist_rows[0] if dist_rows else []
 
 # ---------- YOUTUBE / GMAIL OAUTH client_secret.json replacement ----------
 # Si tu as [youtube_oauth] ou [gmail_oauth] dans le TOML, on les récupère en dict
+
+gmail_token_b64 = st.secrets["tokens"]["gmail"]
+gmail_creds = pickle.load(BytesIO(base64.b64decode(gmail_token_b64)))
+
 youtube_client_secret_info = st.secrets.get("youtube_oauth", None)
 gmail_client_secret_info = st.secrets.get("gmail_oauth", None)
 
@@ -502,7 +509,7 @@ def make_mime_attachment(file_path, filename):
     part.add_header('Content-Disposition', 'attachment', filename=filename)
     return part
 
-def send_email_with_attachments_gmail(subject, body, to_email, attachments_paths, creds):
+def send_email_with_attachments_gmail(subject, body, to_email, attachments_paths, creds=gmail_creds):
 
     service = googleapiclient.discovery.build("gmail", "v1", credentials=creds)
     message = MIMEMultipart()
