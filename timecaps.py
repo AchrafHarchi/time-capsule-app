@@ -623,7 +623,7 @@ if st.session_state["current_step"] >= 6 and st.session_state.get("client_id"):
                 "Les codes d'accès ont été générés et stockés.\n\n"
                 "Cordialement,\nL'équipe Capsule Temporelle"
             )
-            send_email_with_attachments_gmail(subject, body, client_email, attachments, creds=creds)
+            send_email_with_attachments_gmail(subject, body, client_email, attachments, creds=gmail_creds)
 
             for fpath in created_files:
                 try: os.remove(fpath)
