@@ -127,24 +127,6 @@ youtube_b64 = tokens_section.get("youtube", "")
 if youtube_b64:
     PICKLE_FILE = _write_base64_to_temp(youtube_b64, "token.pkl")
 
-# gmail token (token_gmail.pkl)
-gmail_b64 = tokens_section.get("gmail", "")
-if gmail_b64:
-    GMAIL_TOKEN_FILE = _write_base64_to_temp(gmail_b64, "token_gmail.pkl")
-
-# Si les tokens n'existent pas dans st.secrets, PICKLE_FILE / GMAIL_TOKEN_FILE resteront None
-# et tu pourras lancer le flow OAuth normal pour générer les fichiers et (éventuellement)
-# convertir puis coller en base64 dans ton TOML.
-
-# ---------- Résumé des variables exposées ----------
-# INFO_SHEET_ID, DIST_SHEET_ID,
-# CREDENTIALS_FILE (path temporaire si créé), creds (Credentials object),
-# SCOPES,
-# CLIENT_SECRET_FILE (path temporaire si créé),
-# YOUTUBE_CLIENT_SECRET (dict), GMAIL_CLIENT_SECRET (dict),
-# YOUTUBE_SCOPES,
-# PICKLE_FILE (path to token.pkl if present in secrets),
-# GMAIL_TOKEN_FILE (path to token_gmail.pkl if present in secrets)
 
 
 # ---------- SESSION STATE ----------
@@ -520,9 +502,8 @@ def make_mime_attachment(file_path, filename):
     part.add_header('Content-Disposition', 'attachment', filename=filename)
     return part
 
-def send_email_with_attachments_gmail(subject, body, to_email, attachments_paths, creds_file=GMAIL_TOKEN_FILE):
-    with open(creds_file, "rb") as f:
-        creds = pickle.load(f)
+def send_email_with_attachments_gmail(subject, body, to_email, attachments_paths, creds):
+
     service = googleapiclient.discovery.build("gmail", "v1", credentials=creds)
     message = MIMEMultipart()
     message["to"] = to_email
@@ -635,7 +616,7 @@ if st.session_state["current_step"] >= 6 and st.session_state.get("client_id"):
                 "Les codes d'accès ont été générés et stockés.\n\n"
                 "Cordialement,\nL'équipe Capsule Temporelle"
             )
-            send_email_with_attachments_gmail(subject, body, client_email, attachments, creds_file="token_gmail.pkl")
+            send_email_with_attachments_gmail(subject, body, client_email, attachments, creds=creds)
 
             for fpath in created_files:
                 try: os.remove(fpath)
